@@ -2,12 +2,9 @@ name: deployment-workflow
 on:
     push:
         branches: [ master ]
-
     workflow_dispatch:
-   
 env:
     maven_packages_cache: ".m2/repository"
-   
 jobs:
     build:
         runs-on: self-hosted
@@ -17,20 +14,15 @@ jobs:
               with:
                 path: $maven_packages_cache
                 key: ${{runner.os}}-build
-                
             - name: Checkout repository
               uses: actions/checkout@v2
-              
             - name: Build Servlet
               run: mvn compile
-              
             - name: Upload Artifact for [test, package] 
               uses: actions/upload-artifact@v2
               with:
                 name: target
                 path: "target/*"
-    
-    
     test:
         needs:
             - build
@@ -44,7 +36,6 @@ jobs:
                 
             - name: Run Unit-Tests
               run: mvn test
-        
     package:
         needs:
             - test
@@ -64,7 +55,6 @@ jobs:
               with:
                 name: war
                 path: "target/*.war"
-    
     deploy_test:
         needs:
             - package
@@ -72,7 +62,6 @@ jobs:
         environment:
             name: Test environment
             url: http://localhost:8081/game2048
-        steps:
-                
+        steps:      
             - name: Start server
               run: cp -f ./target/game2048.war /usr/local/tomcat/webapps
